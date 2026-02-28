@@ -8,11 +8,15 @@
  * Response: { "embedding": [...] }
  */
 
-import { handleCorsPreflight, addCorsHeaders } from '../_shared/cors.ts';
-import { verifyAuth, getSupabaseUrl, getSupabaseServiceKey } from '../_shared/auth.ts';
+import { handleCorsPreflight, addCorsHeaders } from "../_shared/cors.ts";
+import {
+  verifyAuth,
+  getSupabaseUrl,
+  getSupabaseServiceKey,
+} from "../_shared/auth.ts";
 
-const OPENAI_API_URL = 'https://api.openai.com/v1/embeddings';
-const EMBEDDING_MODEL = 'text-embedding-3-small';
+const OPENAI_API_URL = "https://api.openai.com/v1/embeddings";
+const EMBEDDING_MODEL = "text-embedding-3-small";
 
 Deno.serve(async (request: Request) => {
   // Handle CORS preflight
@@ -22,10 +26,10 @@ Deno.serve(async (request: Request) => {
   }
 
   // Only allow POST requests
-  if (request.method !== 'POST') {
+  if (request.method !== "POST") {
     const response = new Response(
-      JSON.stringify({ error: 'Method not allowed. Use POST.' }),
-      { status: 405, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: "Method not allowed. Use POST." }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
     );
     return addCorsHeaders(response, request);
   }
@@ -35,15 +39,19 @@ Deno.serve(async (request: Request) => {
     const supabaseUrl = getSupabaseUrl(request);
     const supabaseServiceKey = getSupabaseServiceKey();
 
-    const authResult = await verifyAuth(request, supabaseUrl, supabaseServiceKey);
+    const authResult = await verifyAuth(
+      request,
+      supabaseUrl,
+      supabaseServiceKey
+    );
 
     if (authResult.error || !authResult.user) {
-      console.error('Authentication failed:', authResult.error);
+      console.error("Authentication failed:", authResult.error);
       const response = new Response(
-        JSON.stringify({ error: authResult.error || 'Authentication failed' }),
+        JSON.stringify({ error: authResult.error || "Authentication failed" }),
         {
           status: 401,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return addCorsHeaders(response, request);
@@ -55,22 +63,24 @@ Deno.serve(async (request: Request) => {
       body = await request.json();
     } catch (error) {
       const response = new Response(
-        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        JSON.stringify({ error: "Invalid JSON in request body" }),
         {
           status: 400,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return addCorsHeaders(response, request);
     }
 
     // Validate question field
-    if (!body.question || typeof body.question !== 'string') {
+    if (!body.question || typeof body.question !== "string") {
       const response = new Response(
-        JSON.stringify({ error: 'Missing or invalid "question" field in request body' }),
+        JSON.stringify({
+          error: 'Missing or invalid "question" field in request body',
+        }),
         {
           status: 400,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return addCorsHeaders(response, request);
@@ -80,25 +90,25 @@ Deno.serve(async (request: Request) => {
 
     if (question.length === 0) {
       const response = new Response(
-        JSON.stringify({ error: 'Question cannot be empty' }),
+        JSON.stringify({ error: "Question cannot be empty" }),
         {
           status: 400,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return addCorsHeaders(response, request);
     }
 
     // Get OpenAI API key from environment
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
 
     if (!openaiApiKey) {
-      console.error('OPENAI_API_KEY environment variable is not set');
+      console.error("OPENAI_API_KEY environment variable is not set");
       const response = new Response(
-        JSON.stringify({ error: 'Server configuration error' }),
+        JSON.stringify({ error: "Server configuration error" }),
         {
           status: 500,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return addCorsHeaders(response, request);
@@ -106,10 +116,10 @@ Deno.serve(async (request: Request) => {
 
     // Call OpenAI API to generate embedding
     const openaiResponse = await fetch(OPENAI_API_URL, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${openaiApiKey}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${openaiApiKey}`,
       },
       body: JSON.stringify({
         model: EMBEDDING_MODEL,
@@ -119,15 +129,15 @@ Deno.serve(async (request: Request) => {
 
     if (!openaiResponse.ok) {
       const errorText = await openaiResponse.text();
-      console.error('OpenAI API error:', openaiResponse.status, errorText);
+      console.error("OpenAI API error:", openaiResponse.status, errorText);
 
       const response = new Response(
         JSON.stringify({
-          error: `Failed to generate embedding: ${openaiResponse.status}`
+          error: `Failed to generate embedding: ${openaiResponse.status}`,
         }),
         {
           status: 500,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return addCorsHeaders(response, request);
@@ -136,12 +146,16 @@ Deno.serve(async (request: Request) => {
     const openaiData = await openaiResponse.json();
 
     // Extract embedding from OpenAI response
-    if (!openaiData.data || !Array.isArray(openaiData.data) || openaiData.data.length === 0) {
+    if (
+      !openaiData.data ||
+      !Array.isArray(openaiData.data) ||
+      openaiData.data.length === 0
+    ) {
       const response = new Response(
-        JSON.stringify({ error: 'Invalid response from OpenAI API' }),
+        JSON.stringify({ error: "Invalid response from OpenAI API" }),
         {
           status: 500,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         }
       );
       return addCorsHeaders(response, request);
@@ -150,27 +164,23 @@ Deno.serve(async (request: Request) => {
     const embedding = openaiData.data[0].embedding;
 
     // Return the embedding
-    const response = new Response(
-      JSON.stringify({ embedding }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    const response = new Response(JSON.stringify({ embedding }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
 
     return addCorsHeaders(response, request);
-
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error("Unexpected error:", error);
 
     const response = new Response(
       JSON.stringify({
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       }
     );
 

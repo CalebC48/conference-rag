@@ -498,9 +498,22 @@ async function semanticSearch() {
             return;
         }
 
-        // Step 3: Display results with similarity badges
-        let html = '';
+        // Step 3: Deduplicate results (same text + talk_id combination)
+        const seen = new Set();
+        const uniqueResults = [];
         for (const result of results) {
+            // Create a unique key from text and talk_id
+            const key = `${result.text}|${result.talk_id}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueResults.push(result);
+            }
+        }
+        console.log('Step 3: Deduplicated to', uniqueResults.length, 'unique results');
+
+        // Step 4: Display results with similarity badges
+        let html = '';
+        for (const result of uniqueResults) {
             const sim = result.similarity;
             const badge = similarityBadge(sim);
             html += `<div class="result-card">
