@@ -343,9 +343,13 @@ async function checkSearchReadiness() {
                 const { data, error: fnError } = await supabaseClient.functions.invoke('embed-question', {
                     body: { question: 'test' }
                 });
-                semanticReady = !fnError;
-            } catch {
+                if (fnError) {
+                    console.error('embed-question function error:', fnError);
+                }
+                semanticReady = !fnError && data && data.embedding;
+            } catch (err) {
                 // CORS or network error → function not deployed
+                console.error('embed-question function call failed:', err);
             }
         }
         setSearchReady('semantic', semanticReady);
