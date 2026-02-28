@@ -650,6 +650,119 @@ input:focus {
     border-radius: 2px;
 }
 
+/* ============================================
+   TALK SIMILARITY EXPLORER
+   ============================================ */
+
+.similar-talks-control {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--surface-light);
+}
+
+.btn-similar-talks {
+    background: var(--surface-light);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.btn-similar-talks:hover {
+    background: var(--primary);
+    color: var(--background);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(62, 207, 142, 0.3);
+}
+
+.btn-similar-talks:active {
+    transform: translateY(0);
+}
+
+.similar-talks-results {
+    margin-top: var(--spacing-sm);
+    display: none;
+}
+
+.similar-talks-loading,
+.similar-talks-error,
+.similar-talks-empty {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    margin-top: var(--spacing-xs);
+}
+
+.similar-talks-loading {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.similar-talks-error {
+    color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--error);
+}
+
+.similar-talks-empty {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.similar-talks-header {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.similar-talk-item {
+    background: var(--surface);
+    border: 1px solid var(--surface-light);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+    transition: all 0.2s ease;
+}
+
+.similar-talk-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(62, 207, 142, 0.1);
+}
+
+.similar-talk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
+}
+
+.similar-talk-title {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.similar-talk-speaker {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.similar-talk-preview {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin-top: var(--spacing-xs);
+    padding-top: var(--spacing-xs);
+    border-top: 1px solid var(--surface-light);
+}
+
 .result-sources {
     font-size: 0.8rem;
     color: var(--text-muted);
