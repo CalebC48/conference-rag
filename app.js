@@ -484,10 +484,14 @@ async function semanticSearch() {
 
     try {
         // Step 1: Get embedding
+        console.log('Step 1: Getting embedding for query:', query);
         const embedding = await getEmbedding(query);
+        console.log('Step 1: Got embedding, length:', embedding?.length);
 
         // Step 2: Search for similar sentences
+        console.log('Step 2: Searching for similar sentences...');
         const results = await searchSentences(embedding);
+        console.log('Step 2: Got', results?.length || 0, 'results');
 
         if (!results || results.length === 0) {
             showResults('semantic', '<div class="no-results">No similar content found. Try a different query.</div>');
@@ -604,12 +608,18 @@ async function getEmbedding(text) {
 async function searchSentences(embedding) {
     if (!supabaseClient) throw new Error('Supabase not configured');
 
+    console.log('Calling match_sentences RPC with embedding length:', embedding?.length);
     const { data, error } = await supabaseClient.rpc('match_sentences', {
         query_embedding: embedding,
         match_count: 20
     });
 
-    if (error) throw new Error(`Database search failed: ${error.message}`);
+    if (error) {
+        console.error('match_sentences RPC error:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        throw new Error(`Database search failed: ${error.message}`);
+    }
+    console.log('match_sentences returned', data?.length || 0, 'results');
     return data;
 }
 

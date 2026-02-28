@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS sentence_embeddings (
 );
 
 -- Create index for talk_id grouping
-CREATE INDEX IF NOT EXISTS sentence_embeddings_talk_id_idx 
+CREATE INDEX IF NOT EXISTS sentence_embeddings_talk_id_idx
 ON sentence_embeddings(talk_id);
 
 -- Enable Row Level Security

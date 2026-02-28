@@ -13,7 +13,7 @@ export interface CorsOptions {
 const DEFAULT_OPTIONS: CorsOptions = {
   origin: '*', // Allow all origins (can be restricted to specific domains)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  headers: ['Content-Type', 'Authorization'],
+  headers: ['Content-Type', 'Authorization', 'x-client-info', 'apikey'],
   maxAge: 86400, // 24 hours
 };
 
